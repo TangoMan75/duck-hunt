@@ -1,0 +1,99 @@
+html, body {
+	background-color: black;
+	font-family: 'Arial', sans-serif;
+	color: white;
+	background-image: url('../img/background-01.jpg');
+	background-position: top center;
+	background-repeat: no-repeat;
+	cursor: crosshair;
+}
+
+#screen {
+	top: 0px;
+	left:0px;
+	margin: auto;
+}
+
+.display {
+	display : table-cell;
+	vertical-align : middle;
+	text-align : center;
+	color : white;
+}
+
+/****** HUD ******/
+
+nav {
+	width: 80%;
+	margin: auto;
+	line-height: 80px;
+}
+
+#logo {
+	float: left;
+	font-size: 25px;
+	margin-left: 25px;
+}
+
+#hud {
+	float: right;
+}
+
+.item {
+	display: inline;
+	font-size: 16px;
+	margin-right: 25px;
+}
+
+.unselectable {
+	-o-user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
+	user-drag: none; 
+}
+
+ .image {
+ 	position: fixed;
+ }
+
+/***** Dialogs *****/
+
+.bubble {
+	position: fixed;
+	color: black;
+	background-color: white;
+	padding: 10px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.score {
+	position: fixed;
+	color: white;
+}
+
+.combo {
+	position: fixed;
+	color: white;
+	font-weight: bold;
+	background-color: red;
+	padding: 5px;
+	border-radius: 10px;
+}
+
+.bonus {
+	position: fixed;
+	color: white;
+	font-weight: bold;
+	background-color: green;
+	padding: 5px;
+	border-radius: 10px;
+}
+
+.clearfix:after {
+  content: "";
+  clear: both;
+}
