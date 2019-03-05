@@ -3,6 +3,8 @@ Duck Hunt
 
 TangoMan duck-hunt is a remix of the famous vintage nintendo nes game in jQuery.
 
+You can now play [Duck Hunt](http://tangoman75.github.io/duck-hunt) live on my Duck Hunt github page: [http://tangoman75.github.io/duck-hunt](http://tangoman75.github.io/duck-hunt)
+
 Note
 ====
 
