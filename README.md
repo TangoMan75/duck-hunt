@@ -11,7 +11,7 @@ If you find any bug please report here : [Issues](https://github.com/TangoMan75/
 License
 =======
 
-Copyrights (c) 2018 Matthias Morin
+Copyrights (c) 2019 Matthias Morin
 
 [![License][license-MIT]][license-url]
 Distributed under the MIT license.
