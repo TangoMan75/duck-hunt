@@ -12,64 +12,62 @@
  */
 
 // Preloads sound file
-var gobjSound = new Audio();
-gobjSound.src = "sounds/gunshot.mp3";
+var audio = new Audio();
+audio.src = 'sounds/gunshot.mp3';
 
 // Defines possible coordonates to spawn ducks
-var gintMaxX = $(window).width();
-var gintMinX = 0;
-var gintMaxY = $(window).height();
-var gintMinY = 0;
+var windowsMaxWidth = $(window).width();
+var windowsMaxHeight = $(window).height();
 
-$Screen = $("#screen");
-$Screen.width(gintMaxX);
-$Screen.height(gintMaxY);
+$Screen = $('#screen');
+$Screen.width(windowsMaxWidth);
+$Screen.height(windowsMaxHeight);
 
 // Redefines possible coordonates to spawn ducks on window resizing
 $(window).resize(function () {
-    var gintMaxX = $(window).width();
-    var gintMaxY = $(window).height();
-    $Screen.width(gintMaxX);
-    $Screen.height(gintMaxY);
+    var windowsMaxWidth = $(window).width();
+    var windowsMaxHeight = $(window).height();
+    $Screen.width(windowsMaxWidth);
+    $Screen.height(windowsMaxHeight);
 })
 
 // Ducks are unselectable
-$("body").addClass("unselectable");
+$('body').addClass('unselectable');
 
 // Initiates duck properties
-var gintDuckWidth  = 130;
-var gintDuckHeight = 104;
-var gintDuckIndex  = 0;
+var duckWidth  = 130;
+var duckHeight = 104;
+var duckIndex  = 0;
 
 //==================================================
 // Game settings
 //==================================================
 
 // Sets player shots to 0
-var gintShots = 0;
+var shots = 0;
 
 // Sets player hits to 0
-var gintHits = 0;
+var hits = 0;
 
 // Sets player score to 0
-var gintScore = 0;
+var score = 0;
 
 // Sets player life to 3
-var gintLife = 3;
-$("#life").html("Life : " + gintLife);
+var life = 3;
+$('#life').html('Life : ' + life);
 
 //==================================================
 
 // Listening to click event on screen
-$Screen.on("mousedown", function () {
+$Screen.on('mousedown', function () {
     playSound();
 
     // Updates score hud
-    $("#shots").html("Shots&nbsp;:&nbsp;" + (gintShots += 1));
+    $('#shots').html('Shots&nbsp;:&nbsp;' + (shots += 1));
 });
 
 // Listening to keypress event on screen
-$(window).on("keypress", function () {
+$(window).on('keypress', function () {
     debug();
 });
 
@@ -77,8 +75,8 @@ $(window).on("keypress", function () {
 // Init
 //==================================================
 
-gintLevel = 0;
-startNewLevel();
+level = 0;
+start();
 
 //==================================================
 // ANIMATIONS
@@ -88,44 +86,44 @@ startNewLevel();
  * @category  Animations
  * @purpose   Makes duck fly away
  * @param     Duck as jQuery object
- * @assumes   life"), gintLife
- * @uses      flipX, randInt, gameOver, startNewLevel
+ * @assumes   life'), life
+ * @uses      flipX, randInt, gameOver, start
  * @note      When duck successfully flies away, player loses life, and hud is updated
  */
 function flyAway($Duck) {
     // Exept if duck is dead
-    if (!$Duck.hasClass("dead")) {
+    if (!$Duck.hasClass('dead')) {
         $Duck
         .stop()
-        .addClass("flying-away");
+        .addClass('flying-away');
 
         // Duck flies away randomly left or right
-        intX = leftOrRight($Duck);
+        intX = side($Duck);
         flipX($Duck, intX);
 
         // Duck flies away randomly up and down the y axis
-        intY        = randInt(gintMinY, gintMaxY);
+        intY        = randInt(0, windowsMaxHeight);
         intDuration = randInt(1000, 4000);
 
         // Animates duck
         $Duck.animate({
-            "left": intX,
-            "top": intY,
-        }, intDuration, "swing", function () {
+            'left': intX,
+            'top': intY,
+        }, intDuration, 'swing', function () {
 
             // When duck flies out of the screen
             $Duck.remove();
 
             // Player loses life
-            $("#life").html("Life : " + (gintLife -= 1));
+            $('#life').html('Life : ' + (life -= 1));
 
             // Game over when player life points gone
-            if (gintLife <= 0) {
+            if (life <= 0) {
                 gameOver();
 
                 // All ducks are gone but player still has life points left
-            } else if (!$Screen.children().hasClass("alive")) {
-                startNewLevel();
+            } else if (!$Screen.children().hasClass('alive')) {
+                start();
             }
         });
     }
@@ -135,29 +133,29 @@ function flyAway($Duck) {
  * @category  Animations
  * @purpose   Kills duck, starts new level when no more ducks alive
  * @param     Duck as jQuery object
- * @assumes   gintMaxY
- * @uses      startNewLevel
+ * @assumes   windowsMaxHeight
+ * @uses      start
  */
 function killDuck($Duck) {
     // Changes duck properties
     $Duck
     .stop()
-    .addClass("dead")
-    .attr("src", "img/duck-dead.gif");
+    .addClass('dead')
+    .attr('src', 'img/duck-dead.gif');
 
     // Makes duck fall
     $Duck.animate({
-        "top": gintMaxY + $Duck.height(),
+        'top': windowsMaxHeight + $Duck.height(),
 
     }, 1000, function () {
 
         // Kills and removes duck
-        $Duck.removeClass("alive");
+        $Duck.removeClass('alive');
         $Duck.remove();
 
         // Starts new level when no more ducks alive
-        if (!$Screen.children().hasClass("alive")) {
-            startNewLevel();
+        if (!$Screen.children().hasClass('alive')) {
+            start();
         }
     });
 }
@@ -167,19 +165,19 @@ function killDuck($Duck) {
  * @purpose   Spawns randomly duck on left or right side
  * @param     Duck as jQuery object
  * @return    intX as Integer
- * @assumes   gintMaxX
+ * @assumes   windowsMaxWidth
  */
-function leftOrRight($Duck) {
-    intLeftOrRight = Math.round(Math.random());
+function side($Duck) {
+    random = Math.round(Math.random());
 
     // Left side
-    if (intLeftOrRight == 0) {
-        intX = (intLeftOrRight * gintMaxX) - $Duck.width();
+    if (random == 0) {
+        intX = (random * windowsMaxWidth) - $Duck.width();
     }
 
     // Right side
     else {
-        intX = (intLeftOrRight * gintMaxX) + $Duck.width();
+        intX = (random * windowsMaxWidth) + $Duck.width();
     }
     return intX;
 }
@@ -191,15 +189,15 @@ function leftOrRight($Duck) {
  */
 function flipX($Duck, intX) {
     // Gets duck horizontal position (parseInt is required to convert value from string to integer)
-    intOldX = parseInt($Duck.css("left"), 10);
+    intOldX = parseInt($Duck.css('left'), 10);
 
-    // Ducks look right when moving right
+    // Ducks face right when moving right
     if (intX > intOldX) {
-        $Duck.attr("src", "img/duck-right.gif");
+        $Duck.attr('src', 'img/duck-right.gif');
     }
-    // Ducks look left when moving left
+    // Ducks face left when moving left
     else {
-        $Duck.attr("src", "img/duck-left.gif");
+        $Duck.attr('src', 'img/duck-left.gif');
     }
 }
 
@@ -214,9 +212,9 @@ function moveDuck($Duck, intX, intY, intDuration) {
     flipX($Duck, intX);
 
     $Duck.animate({
-            "left": intX,
-            "top": intY,
-        }, intDuration, "swing", function () {
+            'left': intX,
+            'top': intY,
+        }, intDuration, 'swing', function () {
 
             // Duck will keep moving around randomly
             randomMove($Duck)
@@ -228,17 +226,17 @@ function moveDuck($Duck, intX, intY, intDuration) {
  * @category  Animations
  * @purpose   Moves duck to random coordonates on screen
  * @param     Duck as jQuery object
- * @assumes   gintMaxX, gintMaxY
+ * @assumes   windowsMaxWidth, windowsMaxHeight
  * @uses      randInt, moveDuck
  */
 function randomMove($Duck) {
     // Defines max coordonates inside the screen according to duck size
-    intMaxX = gintMaxX - $Duck.width();
-    intMaxY = gintMaxY - $Duck.height();
+    intMaxX = windowsMaxWidth - $Duck.width();
+    intMaxY = windowsMaxHeight - $Duck.height();
 
     // Defines random coordonates
-    intX = randInt(gintMinX, intMaxX);
-    intY = randInt(gintMinY, intMaxY);
+    intX = randInt(0, intMaxX);
+    intY = randInt(0, intMaxY);
 
     // Sets random speed
     intDuration = randInt(500, 2000);
@@ -258,28 +256,28 @@ function splatter($Duck) {
     intHeight = $Duck.height();
 
     // parseInt is required to convert value from string to integer
-    intX = parseInt($Duck.css("left"), 10) + (intWidth / 2);
-    intY = parseInt($Duck.css("top"), 10) + (intHeight / 2);
+    intX = parseInt($Duck.css('left'), 10) + (intWidth / 2);
+    intY = parseInt($Duck.css('top'), 10) + (intHeight / 2);
 
-    $Blood = $("<img>");
+    $Blood = $('<img>');
     makeUnselectable($Blood);
 
     $Blood
-    .addClass("splatter")
-    .addClass("image")
-    .attr("src", "img/blood.gif");
+    .addClass('splatter')
+    .addClass('image')
+    .attr('src', 'img/blood.gif');
 
     // Sets Blood size
     intSize = randInt(50, 150)
     $Blood.css({
-        "width": intSize,
-        "height": intSize,
+        'width': intSize,
+        'height': intSize,
     });
 
     // Sets Blood position
     $Blood.css({
-        "left": intX,
-        "top": intY,
+        'left': intX,
+        'top': intY,
     });
 
     $Screen.append($Blood);
@@ -299,9 +297,9 @@ function splatter($Duck) {
  * @purpose   Plays gunshot sound
  */
 function playSound() {
-    var gobjSound = new Audio();
-    gobjSound.src = "sounds/gunshot.mp3";
-    gobjSound.play();
+    var audio = new Audio();
+    audio.src = 'sounds/gunshot.mp3';
+    audio.play();
 }
 
 //==================================================
@@ -315,7 +313,7 @@ function playSound() {
  * @uses      killDuck
  */
 function debug() {
-    $Screen.children(".alive").each(function () {
+    $Screen.children('.alive').each(function () {
         killDuck($(this));
     });
 }
@@ -331,24 +329,24 @@ function debug() {
  */
 function bubble($Duck, strClass, strMessage) {
     // Locates duck and appends sprite to screen
-    intX = parseInt($Duck.css("left"), 10);
-    intY = parseInt($Duck.css("top"), 10);
+    intX = parseInt($Duck.css('left'), 10);
+    intY = parseInt($Duck.css('top'), 10);
 
     // Creates bubble
-    $Bubble = $("<div>");
+    $Bubble = $('<div>');
     $Bubble
     .addClass(strClass)
     .html(strMessage);
 
     // Centers bubble according to duck width
-    if (strClass != "bubble") {
+    if (strClass != 'bubble') {
         intX += ($Duck.width() / 2) - ($Bubble.width() / 2);
     }
 
     // Sets dialog position
     $Bubble.css({
-        "left": intX,
-        "top": intY,
+        'left': intX,
+        'top': intY,
     });
 
     // Appends bubble to screen
@@ -356,22 +354,22 @@ function bubble($Duck, strClass, strMessage) {
 
     // Changes animation according to dialog type
     switch (strClass) {
-        case "bubble":
+        case 'bubble':
             intUp = 10;
             break;
-        case "score":
+        case 'score':
             intUp = 20;
             break;
-        case "combo":
+        case 'combo':
             intUp = 30;
             break;
-        case "bonus":
+        case 'bonus':
             intUp = 40;
             break;
     }
 
     $Bubble.animate({
-        "top": intY - intUp,
+        'top': intY - intUp,
     }, 500);
     $Bubble.fadeOut(700, function () {
         $Bubble.remove();
@@ -388,13 +386,13 @@ function display(strMessage) {
     intScreenHeight = $Screen.height()
     intScreenWidth  = $Screen.width()
 
-    $Display = $("<div>");
+    $Display = $('<div>');
     $Display
     .height(intScreenHeight)
     .width(intScreenWidth)
-    .addClass("display")
+    .addClass('display')
     .css({
-        "font-size": 200,
+        'font-size': 200,
     })
     .html(strMessage);
 
@@ -402,7 +400,7 @@ function display(strMessage) {
 
     // dialog animation
     $Display.animate({
-        "font-size": 200,
+        'font-size': 200,
     }, 600);
     $Display.fadeOut(600, function () {
         $Display.remove();
@@ -418,19 +416,19 @@ function display(strMessage) {
 function randomDialog() {
     switch (randInt(1, 5)) {
         case 1:
-            strDialog = "Bye !";
+            strDialog = 'Bye !';
             break;
         case 2:
-            strDialog = "See you !";
+            strDialog = 'See you !';
             break;
         case 3:
-            strDialog = "Catch me if you can !";
+            strDialog = 'Catch me if you can !';
             break;
         case 4:
-            strDialog = "Hasta la vista baby !";
+            strDialog = 'Hasta la vista baby !';
             break;
         case 5:
-            strDialog = "Ciao !";
+            strDialog = 'Ciao !';
             break;
     }
     return strDialog;
@@ -441,7 +439,7 @@ function randomDialog() {
  * @purpose   Computes score according to duck size and updates score hud
  * @param     Duck as jQuery object
  * @return    intScore as Integer
- * @assumes   score"), gintScore, $("#hits"), gintHits
+ * @assumes   score'), score, $('#hits'), hits
  */
 function score($Duck) {
     // Gets duck size
@@ -449,8 +447,8 @@ function score($Duck) {
     intScore  = Math.floor(13000 / intHeight);
 
     // Updates score hud
-    $("#score").html("Score&nbsp;:&nbsp;" + (gintScore += intScore));
-    $("#hits").html("Hits&nbsp;:&nbsp;" + (gintHits += 1));
+    $('#score').html('Score&nbsp;:&nbsp;' + (score += intScore));
+    $('#hits').html('Hits&nbsp;:&nbsp;' + (hits += 1));
     return intScore;
 }
 
@@ -497,90 +495,90 @@ function stopPropagation(e) {
  */
 function gameOver() {
     // Unsets mousedown event on screen
-    $Screen.off("mousedown");
+    $Screen.off('mousedown');
 
     // Unsets events on all remaining ducks
-    $Screen.children(".alive").off();
+    $Screen.children('.alive').off();
 
     // Keeps them unselectable
-    $Screen.children(".alive").on('dragstart', function () {
+    $Screen.children('.alive').on('dragstart', function () {
         return false;
     });
 
     // Unsets timeouts on all remaining ducks
-    $Screen.children(".alive").each(function () {
-        window.clearTimeout($(this).attr("data-timeout"));
+    $Screen.children('.alive').each(function () {
+        window.clearTimeout($(this).attr('data-timeout'));
     });
 
     // Stops animation for all ducks on screen
-    $Screen.children(".alive").clearQueue().stop();
+    $Screen.children('.alive').clearQueue().stop();
 
     // Empties screen of all remaining ducks
     // $Screen.empty();
 
-    // Displays "Game Over" message
-    display("GAME OVER !");
+    // Displays 'Game Over' message
+    display('GAME OVER !');
 }
 
 /**
  * @category  Game
  * @purpose   Appends duck to screen, sets timeout and makes it clickable
  * @param     Duck as jQuery object, intSize as Integer, intDuration as Integer
- * @assumes   Screen, gintDuckWidth, gintDuckHeight, gintMinY, gintMaxY
- * @uses      makeUnselectable, leftOrRight, randInt, randomMove, flyAway, bubble, randomDialog, score, killDuck
+ * @assumes   Screen, duckWidth, duckHeight, 0, windowsMaxHeight
+ * @uses      makeUnselectable, side, randInt, randomMove, flyAway, bubble, randomDialog, score, killDuck
  * @note      This is the main part of the game architecture
  */
 function spawnDuck($Duck, intSize, intDuration) {
     // Creates duck and appends to screen
-    $Duck = $("<img>");
-    $Duck.addClass("image");
-    $Duck.addClass("alive");
+    $Duck = $('<img>');
+    $Duck.addClass('image');
+    $Duck.addClass('alive');
     makeUnselectable($Duck);
     $Screen.append($Duck);
 
     // Sets random duck size
     $Duck.css({
-        "width": gintDuckWidth * intSize,
-        "height": gintDuckHeight * intSize,
+        'width': duckWidth * intSize,
+        'height': duckHeight * intSize,
     });
 
     // Duck spawns randomly left or right
-    intX = leftOrRight($Duck);
+    intX = side($Duck);
 
     // Duck spawns randomly up and down the y axis
-    intY = randInt(gintMinY, gintMaxY);
+    intY = randInt(0, windowsMaxHeight);
 
     // Sets duck position
     $Duck.css({
-        "left": intX,
-        "top": intY,
+        'left': intX,
+        'top': intY,
     });
 
     // Duck will move inside screen and then go away after a random amount of time
     randomMove($Duck);
     objTimeout = window.setTimeout(function () {
         flyAway($Duck);
-        bubble($Duck, "bubble", randomDialog());
+        bubble($Duck, 'bubble', randomDialog());
     }, intDuration);
 
     // Stores timeout id into $Duck attribute
-    $Duck.attr("data-timeout", objTimeout);
+    $Duck.attr('data-timeout', objTimeout);
 
     // Listens to click event on ducks
-    $Duck.on("mousedown", function () {
+    $Duck.on('mousedown', function () {
 
         // Gets timeOut id from $Duck attribute
-        objTimeout = $Duck.attr("data-timeout");
+        objTimeout = $Duck.attr('data-timeout');
         window.clearTimeout(objTimeout);
 
         splatter($Duck);
-        bubble($Duck, "score", score($Duck));
-        if ($Duck.hasClass("flying-away")) {
+        bubble($Duck, 'score', score($Duck));
+        if ($Duck.hasClass('flying-away')) {
             score($Duck);
-            bubble($Duck, "bonus", score($Duck));
+            bubble($Duck, 'bonus', score($Duck));
         }
-        if ($Duck.hasClass("dead")) {
-            bubble($Duck, "combo", "COMBO HIT !");
+        if ($Duck.hasClass('dead')) {
+            bubble($Duck, 'combo', 'COMBO HIT !');
         }
         else {
             killDuck($Duck);
@@ -591,30 +589,30 @@ function spawnDuck($Duck, intSize, intDuration) {
 /**
  * @category  Game
  * @purpose   Builds new level
- * @assumes   Screen, $("#level"), gintLevel, gintDuckIndex
+ * @assumes   Screen, $('#level'), level, duckIndex
  * @uses      display, spawnDuck, randInt
  * @note      This is another big chunk of the game architecture
  */
-function startNewLevel() {
+function start() {
     // Clears screen for unremoved elements if any
     $Screen.empty();
-    gintLevel++;
+    level++;
 
     // Updates level in hud
-    $("#level").html("Level : " + gintLevel);
-    display("Level&nbsp;" + gintLevel);
+    $('#level').html('Level : ' + level);
+    display('Level&nbsp;' + level);
 
     // Spawns ducks
-    for (i = 0; i < gintLevel; i++) {
+    for (i = 0; i < level; i++) {
 
         // Each duck need a unique name for reference
-        gintDuckIndex += 1;
+        duckIndex += 1;
         intDuckSize = 1 + Math.random();
-        intTemp     = 30000 / gintLevel;
+        intTemp     = 30000 / level;
         intDuration = Math.round(randInt(intTemp, intTemp * 2));
 
-        // The gintDuckIndex hack is kind of a weird behavior of javascript/jQuery. Allows to target each individual duck on callback functions.
-        spawnDuck(gintDuckIndex, intDuckSize, intDuration);
+        // The duckIndex hack is kind of a weird behavior of javascript/jQuery. Allows to target each individual duck on callback functions.
+        spawnDuck(duckIndex, intDuckSize, intDuration);
     }
 }
 
